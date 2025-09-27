@@ -1,6 +1,5 @@
 # Telegram Bot Assistant
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![pyTelegramBotAPI](https://img.shields.io/badge/pyTelegramBotAPI-4.x-orange.svg)](https://pypi.org/project/pyTelegramBotAPI/)
 
@@ -115,10 +114,6 @@ Key Files:
 ## 📝 Contributing
 
 Fork the repo and submit PRs for improvements!
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
