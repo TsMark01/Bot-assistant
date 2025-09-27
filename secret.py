@@ -1,3 +1,4 @@
-IAM = "" #IAM токен для запуска яндекс гпт
+IAM = "" #IAM token for yandex gpt
 FOLDER_ID = ''
-TOKEN = '' #Здесь ваш токен
+TOKEN = '' #Here is your telegram bot token
+
