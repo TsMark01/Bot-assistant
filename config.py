@@ -1,19 +1,22 @@
-MAX_USERS = 8
-MAX_GPT_TOKENS = 120
-COUNT_LAST_MSG = 4
+# User and Token Limits
+MAX_USERS = 8  # Maximum number of unique users allowed to interact with the bot
+MAX_GPT_TOKENS = 120  # Maximum tokens for a single GPT response
+COUNT_LAST_MSG = 4  # Number of previous messages to include for GPT context
+MAX_USER_STT_BLOCKS = 10  # Maximum speech-to-text blocks per user
+MAX_USER_TTS_SYMBOLS = 5000  # Maximum text-to-speech symbols per user
+MAX_USER_GPT_TOKENS = 4000  # Maximum GPT tokens per user
 
-MAX_USER_STT_BLOCKS = 10
-MAX_USER_TTS_SYMBOLS = 5000
-MAX_USER_GPT_TOKENS = 4000
+# System Prompt for Yandex GPT
+SYSTEM_PROMPT = [{
+    'role': 'system',
+    'text': 'You are a fun and friendly conversationalist. Chat with the user informally, using humor, and keep the dialogue engaging. Act like a human and don’t mention your capabilities. Use the user’s recent messages to tailor your responses.'
+}]  # System prompt for GPT behavior
 
-SYSTEM_PROMPT = [{'role': 'system', 'text': 'Ты веселый собеседник. Общайся с пользователем на "ты" и используй юмор. '
-                                            'Поддерживай диалог. Не объясняй пользователю, что ты умеешь и можешь. '
-                                            'Изображай человека. Также тебе будут доступны последние сообщения пользователя, чтобы ты мог понять как с ним общаться'}]  # список с системным промтом
+# File Paths
+LOGS = 'creds/logs.txt'  # Path to the log file for debugging
+DB_FILE = 'hope.db'  # Path to the SQLite database file
 
-
-
-LOGS = 'creds/logs.txt'
-DB_FILE = 'hope.db'
-TOKENIZE_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/tokenizeCompletion"
-GPT_MODEL = 'yandexgpt-lite'
-GPT_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+# Yandex API Configuration
+TOKENIZE_URL = 'https://llm.api.cloud.yandex.net/foundationModels/v1/tokenizeCompletion'  # URL for tokenizing GPT input
+GPT_MODEL = 'yandexgpt-lite'  # Yandex GPT model used
+GPT_URL = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion'  # URL for GPT completion
