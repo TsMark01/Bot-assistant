@@ -2,12 +2,15 @@ import sqlite3
 import logging
 from config import LOGS, DB_FILE
 
-
-logging.basicConfig(filename=LOGS, level=logging.DEBUG,
-                    format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s", filemode="a")
-
+logging.basicConfig(
+    filename=LOGS,
+    level=logging.DEBUG,
+    format="%(asctime)s FILE: %(filename)s IN: %(funcName)s MESSAGE: %(message)s",
+    filemode="a"
+)
 
 def create_database():
+    """Create the SQLite database and messages table if they don't exist."""
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
@@ -21,13 +24,13 @@ def create_database():
                 tts_symbols INTEGER,
                 stt_blocks INTEGER)
             ''')
-            logging.info("DATABASE: База данных создана")
+            logging.info("DATABASE: Messages table created successfully")
     except Exception as e:
-        logging.error(e)
+        logging.error(f"DATABASE: Error creating table - {e}")
         return None
 
-
 def add_message(user_id, full_message):
+    """Add a message and its metadata to the database."""
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
@@ -37,27 +40,30 @@ def add_message(user_id, full_message):
                     VALUES (?, ?, ?, ?, ?, ?)''',
                            (user_id, message, role, total_gpt_tokens, tts_symbols, stt_blocks)
                            )
-            conn.commit()  # сохраняем изменения
-            logging.info(f"DATABASE: INSERT INTO messages "
-                         f"VALUES ({user_id}, {message}, {role}, {total_gpt_tokens}, {tts_symbols}, {stt_blocks})")
+            conn.commit()  # Save changes to the database
+            logging.info(
+                f"DATABASE: Added message for user {user_id}: "
+                f"role={role}, tokens={total_gpt_tokens}, tts_symbols={tts_symbols}, stt_blocks={stt_blocks}"
+            )
     except Exception as e:
-        logging.error(e)
+        logging.error(f"DATABASE: Error adding message for user {user_id} - {e}")
         return None
 
-
 def count_users(user_id):
+    """Count unique users in the database, excluding the specified user."""
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
             cursor.execute('''SELECT COUNT(DISTINCT user_id) FROM messages WHERE user_id <> ?''', (user_id,))
             count = cursor.fetchone()[0]
+            logging.info(f"DATABASE: Counted {count} unique users excluding user {user_id}")
             return count
     except Exception as e:
-        logging.error(e)
+        logging.error(f"DATABASE: Error counting users - {e}")
         return None
 
-
 def select_n_last_messages(user_id, n_last_messages=4):
+    """Retrieve the n most recent messages for a user and their total GPT tokens."""
     messages = []
     total_spent_tokens = 0
     try:
@@ -71,23 +77,25 @@ def select_n_last_messages(user_id, n_last_messages=4):
                 for message in reversed(data):
                     messages.append({'text': message[0], 'role': message[1]})
                     total_spent_tokens = max(total_spent_tokens, message[2])
+            logging.info(f"DATABASE: Retrieved {len(messages)} messages for user {user_id}")
             return messages, total_spent_tokens
     except Exception as e:
-        logging.error(e)
+        logging.error(f"DATABASE: Error retrieving messages for user {user_id} - {e}")
         return messages, total_spent_tokens
 
-
 def count_all_limits(user_id, limit_type):
+    """Calculate the total usage of a specific limit type (e.g., tts_symbols) for a user."""
     try:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
             cursor.execute(f'''SELECT SUM({limit_type}) FROM messages WHERE user_id=?''', (user_id,))
             data = cursor.fetchone()
             if data and data[0]:
-                logging.info(f"DATABASE: У user_id={user_id} использовано {data[0]} {limit_type}")
+                logging.info(f"DATABASE: User {user_id} used {data[0]} {limit_type}")
                 return data[0]
             else:
+                logging.info(f"DATABASE: No {limit_type} used by user {user_id}")
                 return 0
     except Exception as e:
-        logging.error(e)
+        logging.error(f"DATABASE: Error counting {limit_type} for user {user_id} - {e}")
         return 0
